@@ -2,8 +2,10 @@ import Footer from "../../components/simple/Footer/Footer";
 import Header from "../../components/simple/Header/Header";
 
 import ListCategores from "../../components/smart/ListCategores/ListCategores";
-
 import CartProduct, { CartProductProps } from "../../components/smart/CartProduct/CartProduct";
+
+import HomeImage from "../../components/ui/ImagePage/HomeImage";
+import { Link } from "react-router-dom";
 
 const Home = () => {
 
@@ -48,14 +50,7 @@ const Home = () => {
     <>
       <Header />
       <div className="bg-white text-gray-800">
-        <div
-          className="w-full h-[700px] overflow-hidden bg-cover bg-center flex items-center justify-center"
-          style={{ backgroundImage: "url('/background/HomePage.svg')" }}
-        >
-          <div className="w-[70%] bg-[#D9D9D9]/70 rounded-2xl p-12 text-center">
-            <p className="text-7xl font-bold">Продавайте разом з Torgo</p>
-          </div>
-        </div>
+        <HomeImage />
         <div className="flex flex-col items-center w-full px-4 py-8">
           <h2 className="text-3xl font-bold mb-6 text-[#244622]">Наші категорії</h2>
           <ListCategores />
@@ -65,7 +60,7 @@ const Home = () => {
 
           <div className="flex flex-wrap gap-14 justify-center w-full">
             {products.map((product) => (
-              <CartProduct key={product.id} {...product} />
+              <Link to = '/infoCart'> <CartProduct key={product.id} {...product} /></Link>
             ))}
           </div>
         </div>

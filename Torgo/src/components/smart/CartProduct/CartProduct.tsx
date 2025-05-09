@@ -17,8 +17,8 @@ const CartProduct = (cart: CartProductProps) => {
     id={cart.id}
     className="w-80 rounded-t-lg overflow-hidden shadow-xl bg-white flex flex-col transform transition-transform hover:scale-105 duration-300 border-0"
     >
-      <div className="h-56 overflow-hidden">
-        <img
+    <div className="h-56 overflow-hidden">
+      <img
           src={cart.image}
           alt={cart.name}
           className="w-full h-full object-cover"
