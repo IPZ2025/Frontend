@@ -8,18 +8,27 @@ import { useEffect } from 'react';
 interface RegistrationFormData { name: string; surname: string; email: string; phone: string; password: string; confirmPassword: string; }
 
 const Registrate = () => {
-  const dispatch = useDispatch<AppDispath>();
-  const { jwt } = useSelector((s: RootState) => s.user);
-  const navigate = useNavigate(); 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<RegistrationFormData>();
   const namePattern = /^[a-zA-Zа-яА-ЯёЁіІїЇєЄґҐ\s'-]+$/;
   const phonePattern = /^\+380[0-9]{9}$/;
+  const dispatch = useDispatch<AppDispath>();
+  const { jwt, registrationError } = useSelector((s: RootState) => s.user);
+  const navigate = useNavigate();
+  
 
-  useEffect(() => { if (jwt) navigate('/'); }, [jwt, navigate]);
+  useEffect(() => {
+    if (jwt) navigate('/');
+  }, [jwt, navigate]);
 
-  const onSubmit = (data: RegistrationFormData) => {
-    try { dispatch(registration({ name: data.name, surname: data.surname, email: data.email, phone: data.phone, password: data.password })); } 
-    catch (error) { console.log("Error:", error); }
+  const onSubmit = async (data: RegistrationFormData) => {
+    try {
+      const result = await dispatch(registration(data));
+      if (registration.fulfilled.match(result)) {
+        navigate('/auth/login');
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
   };
 
   return (
@@ -70,6 +79,11 @@ const Registrate = () => {
             <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#3D9637] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Створити</button>
           </div>
         </form>
+        {registrationError && (
+        <div className="text-center text-red-600 mb-4">
+          {registrationError}
+        </div>
+        )}
 
         <div className="text-center text-sm">
           <span className="text-gray-600">Вже зареєстрований?</span>{' '}

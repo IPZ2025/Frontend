@@ -1,8 +1,11 @@
-import React from 'react'
 import { Search, ChevronLeft } from 'lucide-react';
-
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 function Header() {
+  const { jwt } = useSelector((state: RootState) => state.user);
+
   return (
     <header className="bg-[#405F39] text-white p-1 grid grid-cols-2 items-center">
       <div className="grid grid-cols-[auto_1fr_auto] gap-2 items-center">
@@ -26,22 +29,41 @@ function Header() {
       </div>
 
       <div className="flex justify-end items-center gap-4 pr-6 w-full h-full text-lg">
-        <button className="bg-[#D9D9D9] text-black px-4 py-2 rounded-lg hover:bg-gray-300 text-lg w-700">
-          Додати оголошення
-        </button>
-        <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-[#557047] h-50">
-          <div className="w-6 h-6 flex items-center justify-center bg-[#4CAF50] text-white font-bold rounded text-lx">
-            T
+        
+        {jwt ? (
+          <div>
+            <button className="bg-[#D9D9D9] text-black px-4 py-2 rounded-lg hover:bg-gray-300 text-lg w-700">
+              Додати оголошення
+            </button>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-[#557047] h-50">
+              <div className="w-6 h-6 flex items-center justify-center bg-[#4CAF50] text-white font-bold rounded text-lx">
+                T
+              </div>
+              <span className="text-white text-lg">User</span>
+              <div className="text-white text-xl">
+                <ChevronLeft />
+              </div>
+            </div>
           </div>
-          <span className="text-white text-lg">User</span>
-          <div className="text-white text-xl">
-            <ChevronLeft />
+        ) : (
+          <div className="flex gap-2">
+            <Link 
+              to="/auth/login" 
+              className="bg-[#D9D9D9] text-black px-4 py-2 rounded-lg hover:bg-gray-300 text-lg"
+            >
+              Увійти
+            </Link>
+            <Link 
+              to="/auth/register" 
+              className="bg-[#3D9637] text-white px-4 py-2 rounded-lg hover:bg-[#2e7d32] text-lg"
+            >
+              Реєстрація
+            </Link>
           </div>
-        </div>
+        )}
       </div>
-
     </header>
   )
 }
 
-export default Header
+export default Header;
