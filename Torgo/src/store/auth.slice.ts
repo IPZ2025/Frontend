@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { loadState } from "./storage";
+import { loadState, saveState } from "./storage";
 import { PREFIX } from "../api/API";
 import axios, { AxiosError } from "axios";
 
@@ -9,6 +9,10 @@ export interface UserState {
     jwt: string | null;
     registrationError?: string;
     registrationSuccess: boolean;
+}
+
+export interface LoginResponse {
+  access_token: string;
 }
 
 const initialState: UserState = {
@@ -32,13 +36,17 @@ export const userSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder
-            .addCase(registration.fulfilled, (state) => {
-                state.registrationError = undefined;
-            })
-            .addCase(registration.rejected, (state, action) => {
-                state.registrationError = action.error.message || 'Помилка реєстрації';
-            });
+      builder
+        .addCase(registration.fulfilled, (state) => {
+          state.registrationError = undefined;
+        })
+        .addCase(registration.rejected, (state, action) => {
+          state.registrationError = action.error.message || 'Помилка реєстрації';
+        })
+        .addCase(login.fulfilled, (state, action) => {
+          state.jwt = action.payload.data.access_token;
+          saveState({ jwt: action.payload.data.access_token }, AUTH_PERSISTENT_STATE);
+        });
     }
 });
 
@@ -62,16 +70,26 @@ export const registration = createAsyncThunk('/auth/register',
       }
     }
   );
-export const login = createAsyncThunk('/auth/login',
-    async (params:{email: string, password: string}) => {
-        const response = await axios.post(`${PREFIX}/api/v1/auth/login`, {
-            email: params.email,
-            password: params.password
-        });
-        console.log(response);
-        return response;
+export const login = createAsyncThunk(
+  '/auth/login',
+  async (params: {email: string, password: string}, { rejectWithValue }) => {
+    try {
+      const response = await axios.post<LoginResponse>(`${PREFIX}/api/v1/auth/login`, {
+        email: params.email,
+        password: params.password
+      });
+      return response;
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        if (e.response?.status === 401) {
+          return rejectWithValue("Невірний email або пароль");
+        }
+        return rejectWithValue('Помилка сервера');
+      }
+      return rejectWithValue('Невідома помилка під час входу');
     }
-)
+  }
+);
 
 export default userSlice.reducer;
 export const userActions = userSlice.actions;
