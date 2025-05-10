@@ -2,8 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispath, RootState } from '../../../store/store';
-import { registration } from '../../../store/auth.slice';
-import { useEffect } from 'react';
+import { registration, userActions } from '../../../store/auth.slice';
+import { useEffect, useState } from 'react';
 
 interface RegistrationFormData { name: string; surname: string; email: string; phone: string; password: string; confirmPassword: string; }
 
@@ -12,24 +12,48 @@ const Registrate = () => {
   const namePattern = /^[a-zA-Zа-яА-ЯёЁіІїЇєЄґҐ\s'-]+$/;
   const phonePattern = /^\+380[0-9]{9}$/;
   const dispatch = useDispatch<AppDispath>();
-  const { jwt, registrationError } = useSelector((s: RootState) => s.user);
+  const { jwt } = useSelector((s: RootState) => s.user);
   const navigate = useNavigate();
-  
+  const [registrationError, setRegistrationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (jwt) navigate('/');
   }, [jwt, navigate]);
 
   const onSubmit = async (data: RegistrationFormData) => {
+    setRegistrationError(null);
+    
     try {
       const result = await dispatch(registration(data));
+      
       if (registration.fulfilled.match(result)) {
-        navigate('/auth/login');
+        navigate('/auth/login'); // Перенаправление через 2 секунды
+      } else if (registration.rejected.match(result)) {
+        // Обрабатываем ошибку из rejectWithValue
+        const errorMessage = result.payload as string || result.error?.message || 'Помилка реєстрації';
+        console.log(result);
+        console.log(errorMessage);
+        setRegistrationError(errorMessage);
       }
     } catch (error) {
+      setRegistrationError('Невідома помилка під час реєстрації');
       console.error("Registration error:", error);
     }
   };
+  
+  // catch (e) {
+  //       if (axios.isAxiosError(e)) {
+  //         if (e.response?.status === 400) {
+  //           return rejectWithValue("Даний Email вже використовується");
+  //         }
+  //         if (e.response) {
+  //           return rejectWithValue(`Помилка сервера: ${e.response.status}`);
+  //         }
+  //         return rejectWithValue('Помилка підключення до сервера');
+  //       }
+  //       return rejectWithValue('Невідома помилка під час реєстрації');
+  //     }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#5B7056] py-12 px-4 sm:px-6 lg:px-8">
@@ -64,7 +88,7 @@ const Registrate = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">Пароль</label>
-              <input id="password" {...register('password', { required: "Пароль обов'язковий", minLength: { value: 6, message: "Пароль повинен містити щонайменше 6 символів" } })} type="password" className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+              <input id="password" {...register('password', { required: "Пароль обов'язковий", minLength: { value: 16, message: "Пароль повинен містити щонайменше 16 символів" } })} type="password" className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
             </div>
 
@@ -79,10 +103,11 @@ const Registrate = () => {
             <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#3D9637] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Створити</button>
           </div>
         </form>
+
         {registrationError && (
-        <div className="text-center text-red-600 mb-4">
-          {registrationError}
-        </div>
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md text-red-600 text-center">
+            {registrationError}
+          </div>
         )}
 
         <div className="text-center text-sm">

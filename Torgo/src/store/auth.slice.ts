@@ -7,8 +7,6 @@ export const AUTH_PERSISTENT_STATE = 'user';
 
 export interface UserState {
     jwt: string | null;
-    registrationError?: string;
-    registrationSuccess: boolean;
 }
 
 export interface LoginResponse {
@@ -17,7 +15,6 @@ export interface LoginResponse {
 
 const initialState: UserState = {
     jwt: loadState<UserState>(AUTH_PERSISTENT_STATE)?.jwt ?? null,
-    registrationSuccess: false
 };
 
 export const userSlice = createSlice({
@@ -30,19 +27,9 @@ export const userSlice = createSlice({
         logout: (state) => {
             state.jwt = null;
         },
-        resetRegistrationStatus: (state) => {
-            state.registrationSuccess = false;
-            state.registrationError = undefined;
-        }
     },
     extraReducers: (builder) => {
       builder
-        .addCase(registration.fulfilled, (state) => {
-          state.registrationError = undefined;
-        })
-        .addCase(registration.rejected, (state, action) => {
-          state.registrationError = action.error.message || 'Помилка реєстрації';
-        })
         .addCase(login.fulfilled, (state, action) => {
           state.jwt = action.payload.data.access_token;
           saveState({ jwt: action.payload.data.access_token }, AUTH_PERSISTENT_STATE);
@@ -52,24 +39,12 @@ export const userSlice = createSlice({
 
 export const registration = createAsyncThunk('/auth/register',
     async (params: {name: string; surname: string; email: string; phone: string; password: string;
-    }, { rejectWithValue }) => {
-      try {
-        const response = await axios.post(`${PREFIX}/api/v1/user`, params);
-        return response.data;
-      } catch (e) {
-        if (axios.isAxiosError(e)) {
-          if (e.response?.status === 400) {
-            return rejectWithValue("Даний Email вже використовується");
-          }
-          if (e.response) {
-            return rejectWithValue(`Помилка сервера: ${e.response.status}`);
-          }
-          return rejectWithValue('Помилка підключення до сервера');
-        }
-        return rejectWithValue('Невідома помилка під час реєстрації');
-      }
+    }) => {
+      const response = await axios.post(`${PREFIX}/api/v1/user`, params);
+      return response.data;
     }
   );
+
 export const login = createAsyncThunk(
   '/auth/login',
   async (params: {email: string, password: string}, { rejectWithValue }) => {
