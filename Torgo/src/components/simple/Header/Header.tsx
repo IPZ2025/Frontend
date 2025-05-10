@@ -31,7 +31,7 @@ function Header() {
       <div className="flex justify-end items-center gap-4 pr-6 w-full h-full text-lg">
         
         {jwt ? (
-          <div>
+          <div className="flex gap-2">
             <button className="bg-[#D9D9D9] text-black px-4 py-2 rounded-lg hover:bg-gray-300 text-lg w-700">
               Додати оголошення
             </button>
