@@ -79,9 +79,10 @@ const Login = () => {
                 className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
               />
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
-              <div className="text-right mt-1">
+              {/* мейби сделаем  */}
+              {/* <div className="text-right mt-1">
                 <Link to="/forgot-password" className="text-sm text-[#3D9637] hover:underline">Забули пароль?</Link>
-              </div>
+              </div> */} 
             </div>
           </div>
 

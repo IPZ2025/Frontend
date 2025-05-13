@@ -11,6 +11,9 @@ import AuthLayout from './layout/Auth/AuthLayout';
 import Registrate from './pages/Auth/Registrate/Registrate';
 import Login from './pages/Auth/Login/Login';
 import { store } from './store/store';
+import Profile from './pages/Profile/Profile';
+import CreateAdvert from './pages/CreateAdvert/CreateAdvert';
+import Order from './pages/Order/Order';
 
 
 const router = createBrowserRouter([
@@ -40,6 +43,18 @@ const router = createBrowserRouter([
 			}
 		]
 	},
+  {
+    path: '/profile',
+    element: <Profile />
+  },
+  {
+    path: '/publication-create',
+    element: <CreateAdvert />
+  },
+  {
+    path: '/order',
+    element: <Order />
+  },
   {
 		path: '*',
 		element: <div>Ошибка</div>

@@ -25,8 +25,8 @@ export const userSlice = createSlice({
             state.jwt = action.payload;
         },
         logout: (state) => {
-            state.jwt = null;
-        },
+          state.jwt = null;
+          localStorage.removeItem(AUTH_PERSISTENT_STATE);        },
     },
     extraReducers: (builder) => {
       builder
