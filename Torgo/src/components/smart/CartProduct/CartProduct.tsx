@@ -1,3 +1,4 @@
+import { toFormData } from 'axios';
 import React from 'react';
 
 export interface CartProductProps {
@@ -5,12 +6,15 @@ export interface CartProductProps {
   name: string;
   image: string;
   price: number;
-  countre: string;
-  date: Date;
+  created_at: string;
 }
 
 const CartProduct = (cart: CartProductProps) => {
-  const formattedDate = cart.date.toLocaleDateString('uk-UA');
+const dateObj = new Date(cart.created_at).toLocaleDateString('uk-UA', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});;
 
   return (
     <div
@@ -27,8 +31,7 @@ const CartProduct = (cart: CartProductProps) => {
       <div className="p-6 flex flex-col justify-between h-44">
         <p className="text-xl font-semibold text-gray-800">{cart.name}</p>
         <div className="text-gray-600 text-sm">
-          <p>{cart.countre}</p>
-          <p>{formattedDate}</p>
+          <p>{dateObj}</p>
         </div>
         <p className="text-right text-xl font-bold text-[#244622]">
           {cart.price} грн.

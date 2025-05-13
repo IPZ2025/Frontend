@@ -8,10 +8,30 @@ import HomeImage from "../../components/ui/ImagePage/HomeImage";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { clearMessage } from "../../store/message.slice";
+import axios from "axios";
+import { PREFIX } from "../../api/API";
 
 const Home = () => {
+
+
+  const [products, setProducts] = useState<CartProductProps[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`${PREFIX}/api/v1/user/advertisements`);
+        console.log(response.data.data);
+        setProducts(response.data.data);
+        console.log(products)
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const message = useSelector((state: RootState) => state.alert.message);
   const dispatch = useDispatch();
@@ -24,43 +44,6 @@ const Home = () => {
       return () => clearTimeout(timer);
     }
   }, [message, dispatch]);
-
-  const products: CartProductProps[] = [
-    {
-      id: "1",
-      name: "Смартфон Xiaomi",
-      image: "./cartImage/cart1.svg",
-      price: 8999,
-      countre: "Китай",
-      date: new Date("2025-04-15T10:00:00"),
-    },
-    {
-      id: "2",
-      name: "Пилосос Dyson",
-      image: "./cartImage/cart1.svg",
-      price: 15999,
-      countre: "Велика Британія",
-      date: new Date("2025-04-16T14:30:00"),
-    },
-    {
-      id: "3",
-      name: "Телевізор Samsung",
-      image: "./cartImage/cart1.svg",
-      price: 24999,
-      countre: "Південна Корея",
-      date: new Date("2025-04-17T09:45:00"),
-    },
-    {
-      id: "4",
-      name: "Телевізор Samsung",
-      image: "./cartImage/cart1.svg",
-      price: 24999,
-      countre: "Південна Корея",
-      date: new Date("2025-04-17T09:45:00"),
-    }
-
-  ];
-  
 
   return (
     <>
