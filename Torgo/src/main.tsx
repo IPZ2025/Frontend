@@ -14,6 +14,7 @@ import { store } from './store/store';
 import Profile from './pages/Profile/Profile';
 import CreateAdvert from './pages/CreateAdvert/CreateAdvert';
 import Order from './pages/Order/Order';
+import MyAdvert from './pages/MyAdvert/MyAdvert';
 
 
 const router = createBrowserRouter([
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
   {
     path: '/order',
     element: <Order />
+  },
+  {
+    path: '/my-publication',
+    element: <MyAdvert />
   },
   {
 		path: '*',

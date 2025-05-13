@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '../../components/simple/Header/Header';
 import Footer from '../../components/simple/Footer/Footer';
 import { Plus, ArrowLeft } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { setMessage } from '../../store/message.slice';
 
 const CreateAdvert = () => {
   const [formData, setFormData] = useState({
@@ -10,8 +12,11 @@ const CreateAdvert = () => {
     category: '',
     description: '',
     price: '',
-    photo: '' as string | null // Теперь храним только одно фото в base64
+    photo: '' as string | null
   });
+  
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -25,9 +30,8 @@ const CreateAdvert = () => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       
-      // Проверка размера файла (например, не более 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Файл слишком большой. Максимальный размер 5MB.');
+        alert('Файл занадто великий. Максимальний розмір – 5MB.');
         return;
       }
       
@@ -56,14 +60,16 @@ const CreateAdvert = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Подготовка данных для отправки
     const submissionData = {
       ...formData,
-      photo: formData.photo ? formData.photo.split(',')[1] : null // Удаляем префикс data:image/...
+      photo: formData.photo ? formData.photo.split(',')[1] : null
     };
     
     console.log('Form submitted:', submissionData);
-    // Здесь будет логика отправки данных на сервер
+    
+    dispatch(setMessage('Оголошення успішно створено!'));
+    navigate('/');
+
   };
 
   return (

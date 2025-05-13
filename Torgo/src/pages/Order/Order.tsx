@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import Footer from '../../components/simple/Footer/Footer';
 import Header from '../../components/simple/Header/Header';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { setMessage } from '../../store/message.slice';
 
 const Order = () => {
   const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [deliveryMethod, setDeliveryMethod] = useState('nova');
   const [useAccountData, setUseAccountData] = useState(true);
@@ -18,7 +19,8 @@ const Order = () => {
     surname: '',
     email: '',
     phone: '',
-    postOffice: ''
+    postOffice: '', // Это поле для адреса
+    deliveryMethod: ''  // Поле для способа доставки
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,39 +30,46 @@ const Order = () => {
     }));
   };
 
+  // Автозаполнение данных (только name, surname, email, phone)
   const autofillData = () => ({
     name: 'Іван',
     surname: 'Петренко',
     email: 'ivan@example.com',
-    phone: '+380123456789',
-    postOffice: ''
+    phone: '+380123456789'
   });
-
-  const displayedData = useAccountData ? autofillData() : formData;
 
   const handleSubmit = async () => {
     try {
-      const orderPayload = {
-        ...displayedData,
-        deliveryMethod
+      // Формируем данные для отправки
+      const payload = {
+        ...(useAccountData ? autofillData() : {
+          name: formData.name,
+          surname: formData.surname,
+          email: formData.email,
+          phone: formData.phone
+        }),
+        deliveryMethod,
+        ...(deliveryMethod !== 'pickup' && formData.postOffice ? { postOffice: formData.postOffice } : {})
       };
-      console.log(orderPayload);
-    //   const response = await axios.post('/api/orders', orderPayload);
 
-    //   if (response.status === 200 || response.status === 201) {
-        setShowSuccess(true);
-        setTimeout(() => {
-          setShowSuccess(false);
-          navigate('/'); // Переадресація на головну
-        }, 3000);
-    //   } else {
-    //     alert('Помилка при оформленні замовлення. Спробуйте ще раз.');
-    //   }
+      console.log(payload); // Проверка данных
+
+      // Отправка данных на сервер (раскомментировать при реальной интеграции)
+      // await axios.post('/api/orders', {
+      //   ...payload,
+      //   payment: 'cod', // Тип оплаты
+      // });
+
+      dispatch(setMessage('Замовлення успішно оформлено!'));
+      navigate('/');
     } catch (error) {
-      console.error(error);
-      alert('Сервер недоступний або сталася помилка.');
+      console.error('Помилка при оформленні:', error);
+      alert('Щось пішло не так. Спробуйте ще раз.');
     }
   };
+
+  // Данные для отображения (если используются данные аккаунта)
+  const displayedData = useAccountData ? { ...autofillData(), postOffice: formData.postOffice } : formData;
 
   return (
     <>
@@ -158,7 +167,6 @@ const Order = () => {
               value={formData.postOffice}
               onChange={handleChange}
               className="w-full border px-3 py-2 rounded"
-              disabled={useAccountData}
             />
           </div>
         )}

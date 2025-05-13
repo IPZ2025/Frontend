@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../store/store';
 import { userActions } from '../../../store/auth.slice';
-// import { logout } from '../../../store/slices/userSlice'; // Якщо у вас є така дія
 
 function Header() {
   const { jwt } = useSelector((state: RootState) => state.user);
@@ -68,13 +67,20 @@ function Header() {
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 mt-2 bg-white text-black rounded-md shadow-lg w-40 z-50">
+                <div className="absolute right-0 mt-2 bg-white text-black rounded-md shadow-lg w-48 z-50">
                   <Link
                     to="/profile"
                     className="block px-4 py-2 hover:bg-gray-100"
                     onClick={() => setMenuOpen(false)}
                   >
                     Профіль
+                  </Link>
+                  <Link
+                    to="/my-publication"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Мої оголошення
                   </Link>
                   <button
                     onClick={handleLogout}
