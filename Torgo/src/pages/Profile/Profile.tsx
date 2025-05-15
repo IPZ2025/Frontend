@@ -7,12 +7,13 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 
-interface UserData {
+export interface UserData {
   name: string;
   surname: string;
   phone: string;
   email: string;
   location: string;
+  image: string;
 }
 
 
@@ -22,7 +23,8 @@ const [userData, setUserData] = useState<UserData>({
   surname: '',
   phone: '',
   email: '',
-  location: ''
+  location: '',
+  image: ''
 });
 
   

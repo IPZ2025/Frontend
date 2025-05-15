@@ -6,7 +6,10 @@ export interface CartProductProps {
   name: string;
   image: string;
   price: number;
+  categories: string[];
+  description: string;
   created_at: string;
+  user_id: number;
 }
 
 const CartProduct = (cart: CartProductProps) => {
@@ -14,7 +17,7 @@ const dateObj = new Date(cart.created_at).toLocaleDateString('uk-UA', {
   year: 'numeric',
   month: '2-digit',
   day: '2-digit',
-});;
+});
 
   return (
     <div

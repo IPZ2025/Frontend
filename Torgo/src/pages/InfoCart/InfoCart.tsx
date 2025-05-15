@@ -1,9 +1,43 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Footer from "../../components/simple/Footer/Footer";
 import Header from "../../components/simple/Header/Header";
 import { MoveLeft, Heart, Share2, MessageSquare, Phone } from 'lucide-react';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { PREFIX } from "../../api/API";
+import { CartProductProps } from "../../components/smart/CartProduct/CartProduct";
+import { UserData } from "../Profile/Profile";
 
 const InfoCart = () => {
+    const [products, setProducts] = useState<CartProductProps>();
+    const [user, setUser] = useState<UserData>();
+
+    const { productId } = useParams();
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+            const resProduct = await axios.get(`${PREFIX}/api/v1/user/advertisements`);
+            if (productId) {
+                console.log(resProduct.data.data[parseInt(productId)-1]);
+                setProducts(resProduct.data.data[parseInt(productId)-1]);
+            } else {
+                console.error('Product ID is undefined');
+            }
+            // User
+            const resCategores = await axios.get(`${PREFIX}/api/v1/user/1`);
+            console.log(resCategores.data);
+            setUser(resCategores.data);
+            
+            } catch (error) {
+            console.error('Error fetching products:', error);
+            }
+        };
+    fetchProducts();
+    }, []);
+
+    
+    
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
@@ -29,7 +63,7 @@ const InfoCart = () => {
                     <div className="space-y-6">
                         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                             <img 
-                                src="./cartImage/cart1.svg" 
+                                src={`${products?.image}`} 
                                 alt="Запальничка Україна" 
                                 className="w-full h-96 object-contain p-6"
                             />
@@ -38,7 +72,7 @@ const InfoCart = () => {
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <h3 className="text-lg font-semibold text-gray-800 mb-4">Опис товару</h3>
                             <p className="text-gray-600 leading-relaxed">
-                                Запальничка з зображенням карти України у кольорах державного прапора. Верхня частина прикрашена написом "Ukraine". Стильний аксесуар, який стане чудовим доповненням до вашого повсякденного образу або оригінальним подарунком для близьких. Компактна та зручна у використанні.
+                            {products?.description}
                             </p>
                         </div>
                     </div>
@@ -48,10 +82,10 @@ const InfoCart = () => {
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h1 className="text-2xl font-bold text-gray-900">Запальничка Україна</h1>
+                                    <h1 className="text-2xl font-bold text-gray-900">{products?.name}</h1>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-3xl font-bold text-green-600">100 грн</p>
+                                    <p className="text-3xl font-bold text-green-600">{products?.price}грн</p>
                                 </div>
                             </div>
                             
@@ -68,11 +102,19 @@ const InfoCart = () => {
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div>
                                         <p className="text-gray-500">Категорія</p>
-                                        <p className="text-gray-800 font-medium">Запальничка</p>
+                                        <p className="text-gray-800 font-medium">{products?.categories[0]}</p>
                                     </div>
                                     <div>
-                                        <p className="text-gray-500">Дата публікації</p>
-                                        <p className="text-gray-800 font-medium">25.09.2025</p>
+                                        <p className="text-gray-500">Дата публікації</p>                                        
+                                        <p className="text-gray-800 font-medium">
+                                        {products?.created_at 
+                                            ? new Date(products.created_at).toLocaleDateString('uk-UA', {
+                                                year: 'numeric',
+                                                month: '2-digit',
+                                                day: '2-digit'
+                                            })
+                                            : 'Дата не указана'}
+                                        </p>                                    
                                     </div>
                                 </div>
                             </div>
@@ -86,28 +128,28 @@ const InfoCart = () => {
                             
                             <div className="flex items-center gap-4">
                                 <img 
-                                    src="./UserIcon.svg" 
+                                    src={`${user?.image}`} 
                                     alt="Рибін Андрій" 
                                     className="w-14 h-14 rounded-full object-cover border-2 border-green-100"
                                 />
                                 <div>
-                                    <h4 className="font-medium text-gray-900">Рибін Андрій</h4>
+                                    <h4 className="font-medium text-gray-900">{user?.name}</h4>
                                 </div>
                             </div>
-                            
                             <div className="mt-6 grid grid-cols-2 gap-3">
-                                <button className="flex items-center justify-center gap-2 py-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                                <div className="flex items-center gap-2 py-2.5 px-3 bg-gray-50 rounded-lg">
                                     <MessageSquare className="h-5 w-5 text-gray-600" />
-                                    <span>Контакти</span>
-                                </button>
-                            </div>
-                            
-                       
+                                    <span className="text-gray-700">{user?.email || 'Email відсутній'}</span>
+                                </div>
+                                <div className="flex items-center gap-2 py-2.5 px-3 bg-gray-50 rounded-lg">
+                                    <Phone className="h-5 w-5 text-gray-600" />
+                                    <span className="text-gray-700">{user?.phone || 'Телефон відсутній'}</span>
+                                </div>
+                            </div>                  
                         </div>
                     </div>
                 </div>
             </main>
-            
             <Footer />
         </div>
     );

@@ -1,7 +1,7 @@
 import Footer from "../../components/simple/Footer/Footer";
 import Header from "../../components/simple/Header/Header";
 
-import ListCategores from "../../components/smart/ListCategores/ListCategores";
+import ListCategores, { ListCategoresProps } from "../../components/smart/ListCategores/ListCategores";
 import CartProduct, { CartProductProps } from "../../components/smart/CartProduct/CartProduct";
 
 import HomeImage from "../../components/ui/ImagePage/HomeImage";
@@ -14,17 +14,19 @@ import axios from "axios";
 import { PREFIX } from "../../api/API";
 
 const Home = () => {
-
-
   const [products, setProducts] = useState<CartProductProps[]>([]);
+  const [categores, setCategores] = useState<ListCategoresProps[]>([]);
+
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${PREFIX}/api/v1/user/advertisements`);
-        console.log(response.data.data);
-        setProducts(response.data.data);
-        console.log(products)
+        const resProduct = await axios.get(`${PREFIX}/api/v1/user/advertisements`);
+        setProducts(resProduct.data.data);
+        // Categories
+        const resCategores = await axios.get(`${PREFIX}/api/v1/user/advertisements/categories`);
+        console.log(resCategores);
+        setCategores(resCategores.data.data);
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -57,13 +59,21 @@ const Home = () => {
         <HomeImage />
         <div className="flex flex-col items-center w-full px-4 py-8">
           <h2 className="text-3xl font-bold mb-6 text-[#244622]">Наші категорії</h2>
-          <ListCategores />
+            <div className="flex flex-col items-center w-full px-4">
+              <div className="flex flex-wrap justify-between w-full max-w-6xl gap-20">
+                {categores.map((image) =>(
+                 <Link to="/infoCart" key={image.id}>
+                  <ListCategores {...image}/>
+                 </Link>
+                ))}
+              </div>
+            </div>
         </div>
         <div className="flex flex-col items-center w-full px-4 py-8 pb-20 ">
-          <h2 className="text-3xl font-bold mb-6 text-[#244622] text-center pb-2">VIP-Оголошення</h2>
+          <h2 className="text-3xl font-bold mb-6 text-[#244622] text-center pb-2">Недавно додані оголошення</h2>
           <div className="flex flex-wrap gap-14 justify-center w-full">
             {products.map((product) => (
-              <Link to="/infoCart" key={product.id}>
+              <Link to={`/infoCart/${product.id}`} key={product.id}>
                 <CartProduct {...product} />
               </Link>
             ))}
