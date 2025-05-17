@@ -17,13 +17,11 @@ const Home = () => {
   const [products, setProducts] = useState<CartProductProps[]>([]);
   const [categores, setCategores] = useState<ListCategoresProps[]>([]);
 
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const resProduct = await axios.get(`${PREFIX}/api/v1/user/advertisements`);
         setProducts(resProduct.data.data);
-        // Categories
         const resCategores = await axios.get(`${PREFIX}/api/v1/user/advertisements/categories`);
         console.log(resCategores);
         setCategores(resCategores.data.data);
@@ -31,7 +29,6 @@ const Home = () => {
         console.error('Error fetching products:', error);
       }
     };
-
     fetchProducts();
   }, []);
 

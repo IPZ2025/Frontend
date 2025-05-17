@@ -3,7 +3,7 @@ import React from 'react'
 export interface ListCategoresProps{
   id: number;
   name: string;
-  image: string;
+  photo_url: string;
 }
 
 const ListCategores = (images: ListCategoresProps) => {
@@ -11,7 +11,7 @@ const ListCategores = (images: ListCategoresProps) => {
     <>
         <div key={images.id} className="flex flex-col items-center gap-3">
           <img
-            src={images.image}
+            src={images.photo_url}
             alt={`Image ${images.id}`}
             className="w-32 h-32 border-4 border-[#3D9637] rounded-full"
           />

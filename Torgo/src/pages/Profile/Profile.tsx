@@ -51,9 +51,6 @@ const [userData, setUserData] = useState<UserData>({
         console.log(response.data);
         setUserData(response.data);
         setOriginalData(response.data);
-        // Если в ответе есть изображение профиля:
-        // setProfileImage(response.data.profileImage);
-        // setOriginalImage(response.data.profileImage);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -66,19 +63,18 @@ const [userData, setUserData] = useState<UserData>({
     }
   }, [jwt]);
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-        if (!isEditing) {
-          setIsEditing(true);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImage(reader.result as string); // base64 string
+      if (!isEditing) setIsEditing(true);
+    };
+    reader.readAsDataURL(file); // convert to base64
+  }
+};
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -99,11 +95,15 @@ const handleEditClick = async () => {
         name: userData.name,
         surname: userData.surname,
         phone: userData.phone,
-        addresses: userData.addresses,
+        addresses: userData.addresses || '', // необов'язкове
       };
 
       if (userData.email !== originalData.email) {
         payload.email = userData.email;
+      }
+
+      if (profileImage) {
+        payload.image_base64 = profileImage; // надсилаємо base64
       }
 
       const response = await axios.patch(`${PREFIX}/api/v1/user/${isIdUser}`, payload, {
@@ -111,8 +111,6 @@ const handleEditClick = async () => {
           'Authorization': `Bearer ${jwt}`,
         }
       });
-
-      console.log(response);
 
       setOriginalData({ ...userData });
       setOriginalImage(profileImage);
@@ -126,6 +124,8 @@ const handleEditClick = async () => {
     setIsEditing(true);
   }
 };
+
+
 
 
   const hasChanges = () => {
@@ -249,12 +249,11 @@ const handleEditClick = async () => {
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Фото профіля</h3>
               <div className="flex justify-center">
-                  <img 
-                    src='./UserIcon.svg' 
-                    alt="Profile" 
-                    className="w-32 h-32 rounded-full object-cover"
-                  />
-
+                <img 
+                  src={profileImage || userData.image || './UserIcon.svg'} 
+                  alt="Profile" 
+                  className="w-32 h-32 rounded-full object-cover"
+                />
               </div>
               <input
                 type="file"
