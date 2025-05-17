@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ChevronLeft } from 'lucide-react';
+import { Search, ChevronLeft, SearchIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../store/store';
@@ -10,6 +10,18 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [query, setQuery] = useState("");
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      navigate(`/search/${encodeURIComponent(query)}`);
+    }
+  };
+
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSearch();
+  };
 
   const handleLogout = () => {
     dispatch(userActions.logout());
@@ -28,16 +40,22 @@ function Header() {
             />
           </div>
         </Link>
-        <div className="flex w-[60%] rounded overflow-hidden bg-[#D9D9D9]">
-          <input
-            type="text"
-            placeholder="Пошук..."
-            className="w-full px-4 py-2 text-black bg-[#D9D9D9] placeholder-gray-600 focus:outline-none pl-6"
-          />
-          <button className="px-3 bg-[#D9D9D9] text-black hover:bg-gray-300">
-            <Search />
-          </button>
-        </div>
+          <div className="flex w-[60%] rounded overflow-hidden bg-[#D9D9D9]">
+            <input
+              type="text"
+              placeholder="Пошук..."
+              className="w-full px-4 py-2 text-black bg-[#D9D9D9] placeholder-gray-600 focus:outline-none pl-6"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <button
+              className="px-3 bg-[#D9D9D9] text-black hover:bg-gray-300"
+              onClick={handleSearch}
+            >
+              <SearchIcon />
+            </button>
+          </div>
       </div>
 
       <div className="flex justify-end items-center gap-4 pr-6 w-full h-full text-lg relative">

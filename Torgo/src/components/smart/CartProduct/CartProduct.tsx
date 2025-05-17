@@ -26,7 +26,7 @@ const dateObj = new Date(cart.created_at).toLocaleDateString('uk-UA', {
     >
     <div className="h-56 overflow-hidden">
       <img
-          src={cart.photos[0]}
+          src={cart.photos[0]? cart.photos[0] : '/cartImage/cart1.svg'}
           alt={cart.name}
           className="w-full h-full object-cover"
         />

@@ -15,6 +15,7 @@ import Profile from './pages/Profile/Profile';
 import CreateAdvert from './pages/CreateAdvert/CreateAdvert';
 import Order from './pages/Order/Order';
 import MyAdvert from './pages/MyAdvert/MyAdvert';
+import Search from './pages/Search/Search';
 
 
 const router = createBrowserRouter([
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
   {
     path: '/my-publication',
     element: <MyAdvert />
+  },
+  {
+    path: '/search/:productName',
+    element: <Search />
   },
   {
 		path: '*',
