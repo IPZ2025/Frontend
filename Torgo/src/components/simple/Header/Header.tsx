@@ -22,7 +22,7 @@ function Header() {
         <Link to='/'>
           <div className="w-[75%] pl-6">
             <img
-              src="./Logo.svg"
+              src="/Logo.svg"
               alt="Логотип"
               className="w-[100%] h-[100%] rounded-[23px] object-cover"
             />
@@ -57,7 +57,7 @@ function Header() {
               >
                 <div className="w-10 h-10 rounded-full overflow-hidden">
                   <img
-                    src="./UserIcon.svg"
+                    src="/UserIcon.svg"
                     alt="User avatar"
                     className="w-full h-full object-cover"
                   />

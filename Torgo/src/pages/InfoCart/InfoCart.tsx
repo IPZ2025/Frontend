@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import Footer from "../../components/simple/Footer/Footer";
 import Header from "../../components/simple/Header/Header";
-import { MoveLeft, Heart, Share2, MessageSquare, Phone } from 'lucide-react';
+import { MoveLeft, MessageSquare, Phone } from 'lucide-react';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { PREFIX } from "../../api/API";
@@ -14,29 +14,43 @@ const InfoCart = () => {
 
     const { productId } = useParams();
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-            const resProduct = await axios.get(`${PREFIX}/api/v1/user/advertisements`);
-            if (productId) {
-                console.log(resProduct.data.data[parseInt(productId)-1]);
-                setProducts(resProduct.data.data[parseInt(productId)-1]);
-            } else {
-                console.error('Product ID is undefined');
-            }
-            // User
-            const resCategores = await axios.get(`${PREFIX}/api/v1/user/1`);
-            console.log(resCategores.data);
-            setUser(resCategores.data);
-            
-            } catch (error) {
-            console.error('Error fetching products:', error);
-            }
-        };
-    fetchProducts();
-    }, []);
+useEffect(() => {
+    if (!productId || isNaN(Number(productId))) {
+        console.error('Некоректний productId:', productId);
+        return;
+    }
 
-    
+    const fetchProduct = async () => {
+        try {
+            const resProduct = await axios.get(`${PREFIX}/api/v1/user/advertisements`);
+            const index = parseInt(productId) - 1;
+            if (resProduct.data.data[index]) {
+                setProducts(resProduct.data.data[index]);
+            } else {
+                console.error('Продукт не знайдено за індексом', index);
+            }
+        } catch (error) {
+            console.error('Error fetching product:', error);
+        }
+    };
+
+    fetchProduct();
+}, [productId]);
+
+
+    useEffect(() => {
+    const fetchUser = async (product_id: number) => {
+        try {
+        const resUser = await axios.get(`${PREFIX}/api/v1/user/${product_id}`);
+        console.log(resUser.data);
+        setUser(resUser.data);
+        } catch (error) {
+        console.error('Error fetching user:', error);
+        }
+    };
+    if (products?.user_id) fetchUser(products?.user_id)
+    }, [products?.user_id]);
+
     
     return (
         <div className="min-h-screen flex flex-col">
@@ -63,7 +77,7 @@ const InfoCart = () => {
                     <div className="space-y-6">
                         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                             <img 
-                                src={`${products?.image}`} 
+                                src={`${products?.photos[0]}`} 
                                 alt="Запальничка Україна" 
                                 className="w-full h-96 object-contain p-6"
                             />
@@ -136,12 +150,12 @@ const InfoCart = () => {
                                     <h4 className="font-medium text-gray-900">{user?.name}</h4>
                                 </div>
                             </div>
-                            <div className="mt-6 grid grid-cols-2 gap-3">
-                                <div className="flex items-center gap-2 py-2.5 px-3 bg-gray-50 rounded-lg">
+                            <div className="mt-6 grid grid-cols-2 gap-6 w-full">
+                                <div className="flex items-center py-2.5 px-3 bg-gray-50 rounded-lg w-full">
                                     <MessageSquare className="h-5 w-5 text-gray-600" />
                                     <span className="text-gray-700">{user?.email || 'Email відсутній'}</span>
                                 </div>
-                                <div className="flex items-center gap-2 py-2.5 px-3 bg-gray-50 rounded-lg">
+                                <div className="flex items-center gap-2 py-2.5 px-3 bg-gray-50 rounded-lg w-full">
                                     <Phone className="h-5 w-5 text-gray-600" />
                                     <span className="text-gray-700">{user?.phone || 'Телефон відсутній'}</span>
                                 </div>

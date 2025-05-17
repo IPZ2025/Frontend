@@ -8,22 +8,24 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 
 export interface UserData {
+  id: number;
   name: string;
   surname: string;
   phone: string;
   email: string;
-  location: string;
+  addresses: string;
   image: string;
 }
 
 
 const Profile = () => {
 const [userData, setUserData] = useState<UserData>({
+  id: 0,
   name: '',
   surname: '',
   phone: '',
   email: '',
-  location: '',
+  addresses: '',
   image: ''
 });
 
@@ -89,57 +91,49 @@ const [userData, setUserData] = useState<UserData>({
     }
   };
 
-  const handleEditClick = async () => {
-    if (isEditing) {
-      setIsSaving(true);
-      try {
+const handleEditClick = async () => {
+  if (isEditing) {
+    setIsSaving(true);
+    try {
+      const payload: any = {
+        name: userData.name,
+        surname: userData.surname,
+        phone: userData.phone,
+        addresses: userData.addresses,
+      };
 
-        const formData = new FormData();
-        formData.append('name', userData.name);
-        formData.append('surname', userData.surname);
-        formData.append('phone', userData.phone);
-        formData.append('email', userData.email);
-        formData.append('addresses', userData.location);
-        
-
-        if (profileImage && profileImage !== originalImage) {
-          const blob = await fetch(profileImage).then(res => res.blob());
-          formData.append('profileImage', blob, 'profile.jpg');
-        }
-
-        const response = await axios.patch(`${PREFIX}/api/v1/user/${isIdUser}`, {
-            name: userData.name,
-            surname: userData.surname,
-            phone: userData.phone,
-            email: userData.email,
-            addresses: userData.location
-        }, {
-          headers: {
-            'Authorization': `Bearer ${jwt}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        console.log(response);
-
-        setOriginalData({ ...userData });
-        setOriginalImage(profileImage);
-        setIsEditing(false);
-      } catch (error) {
-        console.error('Error saving user data:', error);
-      } finally {
-        setIsSaving(false);
+      if (userData.email !== originalData.email) {
+        payload.email = userData.email;
       }
-    } else {
-      setIsEditing(true);
+
+      const response = await axios.patch(`${PREFIX}/api/v1/user/${isIdUser}`, payload, {
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+        }
+      });
+
+      console.log(response);
+
+      setOriginalData({ ...userData });
+      setOriginalImage(profileImage);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error saving user data:', error);
+    } finally {
+      setIsSaving(false);
     }
-  };
+  } else {
+    setIsEditing(true);
+  }
+};
+
 
   const hasChanges = () => {
     return userData.name !== originalData.name ||
         userData.surname !== originalData.surname ||
         userData.phone !== originalData.phone ||
         userData.email !== originalData.email ||
-        userData.location !== originalData.location ||
+        userData.addresses !== originalData.addresses ||
         (profileImage !== null && profileImage !== originalImage);
   };
 
@@ -223,8 +217,8 @@ const [userData, setUserData] = useState<UserData>({
                 <label className="block text-sm font-medium text-gray-700">Місцезнаходження</label>
                 <input 
                   type="text"
-                  name="location"
-                  value={userData.location}
+                  name="addresses"
+                  value={userData.addresses}
                   onChange={handleInputChange}
                   readOnly={!isEditing}
                   className={`w-full p-2 border rounded-md ${

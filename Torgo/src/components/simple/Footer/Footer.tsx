@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Footer() {
   return (
@@ -23,8 +24,8 @@ function Footer() {
           <div>
             <h2 className="text-2xl font-bold mb-4">Соціальні мережі</h2>
             <div className="flex gap-4 mt-2">
-              <img src="./icons/facebook.svg" alt="Facebook" className="w-[15%] h-[40%]" />
-              <img src="./icons/instagram.svg" alt="Instagram" className="w-[15%] h-[40%] ml-6" />
+              <Link to='https://www.facebook.com/?locale=uk_UK' className="w-[15%] h-[40%]"><img src="/icons/facebook.svg" alt="Facebook" className="w-full" /></Link>
+              <Link to='https://www.instagram.com/' className="w-[15%] h-[40%] ml-6"><img src="/icons/instagram.svg" alt="Instagram" className="w-full" /></Link>
             </div>
           </div>
         </div>

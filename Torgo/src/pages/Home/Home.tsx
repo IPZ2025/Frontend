@@ -62,7 +62,7 @@ const Home = () => {
             <div className="flex flex-col items-center w-full px-4">
               <div className="flex flex-wrap justify-between w-full max-w-6xl gap-20">
                 {categores.map((image) =>(
-                 <Link to="/infoCart" key={image.id}>
+                 <Link to="/categores" key={image.id}>
                   <ListCategores {...image}/>
                  </Link>
                 ))}
@@ -73,7 +73,7 @@ const Home = () => {
           <h2 className="text-3xl font-bold mb-6 text-[#244622] text-center pb-2">Недавно додані оголошення</h2>
           <div className="flex flex-wrap gap-14 justify-center w-full">
             {products.map((product) => (
-              <Link to={`/infoCart/${product.id}`} key={product.id}>
+              <Link to={`/info-cart/${product.id}`} key={product.id} state={{ product }}>
                 <CartProduct {...product} />
               </Link>
             ))}

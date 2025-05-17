@@ -4,7 +4,7 @@ import React from 'react';
 export interface CartProductProps {
   id: string;
   name: string;
-  image: string;
+  photos: string[];
   price: number;
   categories: string[];
   description: string;
@@ -26,7 +26,7 @@ const dateObj = new Date(cart.created_at).toLocaleDateString('uk-UA', {
     >
     <div className="h-56 overflow-hidden">
       <img
-          src={cart.image}
+          src={cart.photos[0]}
           alt={cart.name}
           className="w-full h-full object-cover"
         />
