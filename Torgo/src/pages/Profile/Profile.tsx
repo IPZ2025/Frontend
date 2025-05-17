@@ -14,7 +14,7 @@ export interface UserData {
   phone: string;
   email: string;
   addresses: string;
-  image: string;
+  image_base64: string;
 }
 
 
@@ -26,7 +26,7 @@ const [userData, setUserData] = useState<UserData>({
   phone: '',
   email: '',
   addresses: '',
-  image: ''
+  image_base64: ''
 });
 
   
@@ -250,7 +250,7 @@ const handleEditClick = async () => {
               <h3 className="text-lg font-medium">Фото профіля</h3>
               <div className="flex justify-center">
                 <img 
-                  src={profileImage || userData.image || './UserIcon.svg'} 
+                  src={profileImage || userData.image_base64 || './UserIcon.svg'} 
                   alt="Profile" 
                   className="w-32 h-32 rounded-full object-cover"
                 />

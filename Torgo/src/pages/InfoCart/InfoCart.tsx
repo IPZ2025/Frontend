@@ -141,10 +141,10 @@ useEffect(() => {
                             </div>
                             
                             <div className="flex items-center gap-4">
-                                <img 
-                                    src={`${user?.image}`} 
-                                    alt="Рибін Андрій" 
-                                    className="w-14 h-14 rounded-full object-cover border-2 border-green-100"
+                                <img
+                                src={user?.image_base64 ? user.image_base64 : '/UserIcon.svg'}
+                                alt="Рибін Андрій"
+                                className="w-14 h-14 rounded-full object-cover border-2 border-green-100"
                                 />
                                 <div>
                                     <h4 className="font-medium text-gray-900">{user?.name}</h4>
